@@ -2,23 +2,28 @@
 monsters_dict = {
             'zergling' : {
                 'damage' : 5,
-                'hp' : 35
+                'hp' : 35,
+                'reward' : 5 
                 },
             'infested terran' : {
                 'damage' : 100,
-                'hp' : 100
+                'hp' : 100,
+                'reward' : 10
                 },
             'hydralisk' : {
                 'damage' : 15,
-                'hp': 75
+                'hp': 75,
+                'reward' : 15 
                 },
             'ultralisk' : {
                 'damage' : 25,
-                'hp' : 400
+                'hp' : 400,
+                'reward' : 50
                 },
             'mutalisk' : {
                 'damage' : 10,
                 'hp' : 120,
+                'reward' : '30'
                 }
             }
 monsters = list(monsters_dict.keys())
@@ -53,7 +58,9 @@ rooms = {
                 },
             'Engineering Bay' : {
                     'west' : 'Lab',
-                    'monster' : monsters[1]
+                    'monster' : monsters[1],
+                    'upgrade' : 5,
+                    'item' : 'stim pack'
                 }
          }
 

@@ -35,7 +35,9 @@ def showStatus():
         print('You see a ' + rooms[currentRoom]['item'])
     if "monster" in rooms[currentRoom]:
         print('You see a ' + rooms[currentRoom]['monster'])
-    print('HP:', health)
+        print('Monster HP', monsters_dict[rooms[currentRoom]['monster']]['hp'])
+    print('Your HP:', health)
+    print('Your Attack:', attack)
     print("---------------------------")
 
 def clear():
@@ -52,6 +54,7 @@ def clear():
 inventory = []
 minerals = 0
 health = 40
+attack = 0
 # start the player in the Hall
 currentRoom = 'Entry'
 
@@ -81,6 +84,10 @@ while True:
     # .lower() makes it lower case, .split() turns it to a list
     # therefore, "get golden key" becomes ["get", "golden key"]          
     move = move.lower().split(" ", 1)
+    
+    #teleport
+    if move[0] == 'tele':
+        currentRoom = move[1].title()
 
     #if they type 'go' first
     if move[0] == 'go':
@@ -111,6 +118,10 @@ while True:
             #display a helpful message
             print(move[1] + ' got!')
             #delete the item key:value pair from the room's dictionary
+            if rooms[currentRoom]['item'] == 'stim pack':
+                print('Enter stim to use. Stimming will deplete 10 health for 10 attack.')
+            if rooms[currentRoom]['item'] == 'gauss rifle':
+                attack += 8
             del rooms[currentRoom]['item']
         # if there's no item in the room or the item doesn't match
         else:
@@ -132,28 +143,61 @@ while True:
     if move[0] == 'exit':
         print("Thank you for playing!")
         break
+
+    #upgrade
+    if move[0] == 'upgrade':
+        try:
+            upChoice = input(f'Would you like to upgrade you guass rifle for {rooms[currentRoom]["upgrade"]} minerals? [y/n]')
+            if upChoice == 'y':
+                if (minerals - rooms[currentRoom]['upgrade']) < 0:
+                    print("You don't have enough minerals.")
+                else:
+                    attack += 8
+                    minerals -= rooms[currentRoom]['upgrade']
+                    rooms[currentRoom]['upgrade'] += 5
+            elif upChoice == 'n':
+                print('good luck')
+            else: 
+                print('Not a valid response')
+        except:
+            print("You must be in the Engineering Bay to upgrade.")
+    #stim
+    if move[0] == 'stim':
+        if health == 1:
+            print('You cannot stim anymore')
+        elif (health -10) <= 0:
+            print('You are now at 1 healt and gained 10 attack. You cannot stim anymore.')
+            health = 1
+            attack += 10
+        else: 
+            print("You lose 10 health and gain 10 attack.")
+            health -= 10
+            attack += 10
     
     #attempts to shoot the monster
     if move[0] == 'shoot':
         if 'gauss rifle' in inventory:
             try:
-                print(monster_dict[rooms[currentRoom]['monster']])
                 if move[1] == f'{rooms[currentRoom]["monster"]}':
-                    monster_dict[rooms[currentRoom]['monster']]['hp'] -= 8
-                    if monster_dict[rooms[currentRoom]['monster']]['hp'] <= 0: 
+                    monsters_dict[rooms[currentRoom]['monster']]['hp'] -= attack
+                    if monsters_dict[rooms[currentRoom]['monster']]['hp'] <= 0: 
                         print(f'You killed the {rooms[currentRoom]["monster"]}')
-                        print('You obtained 5 gold')
-                        minerals += 5
+                        print(f'You obtained {monsters_dict[rooms[currentRoom]["monster"]]["reward"]} minerals')
+                        minerals += monsters_dict[rooms[currentRoom]['monster']]['reward']
                         if rooms[currentRoom]['monster'] == 'zergling':
-                            monster_dict['zergling']['hp'] = 35
+                            monsters_dict['zergling']['hp'] = 35
                         elif rooms[currentRoom]['monster'] == 'hydralisk':
-                            monster_dict['hydralisk']['hp'] = 75
+                            monsters_dict['hydralisk']['hp'] = 75
                         del rooms[currentRoom]["monster"]
                     else:
                         print(f'You shot the {rooms[currentRoom]["monster"]}')
-                        print('You did 8 damage')
+                        print(f'You did {attack} damage')
+                        input("Press Enter to continue")
+                        continue
             except:
                 print(f"You can\'t shoot {move[1]}")
+                input("Press Enter to continue")
+                continue
         else:
             print(f'You don\'t have a gun!')
             input("Press Enter to continue")
