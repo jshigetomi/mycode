@@ -1,0 +1,2 @@
+Last page
+{'next': {'url': 'https://www.anapioficeandfire.com/api/characters?page=43&pageSize=50', 'rel': 'next'}, 'prev': {'url': 'https://www.anapioficeandfire.com/api/characters?page=41&pageSize=50', 'rel': 'prev'}, 'first': {'url': 'https://www.anapioficeandfire.com/api/characters?page=1&pageSize=50', 'rel': 'first'}, 'last': {'url': 'https://www.anapioficeandfire.com/api/characters?page=43&pageSize=50', 'rel': 'last'}}
