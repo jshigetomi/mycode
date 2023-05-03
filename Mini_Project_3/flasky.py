@@ -5,19 +5,41 @@ from flask import redirect
 from flask import url_for
 from flask import request
 from flask import render_template
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField
+import json
 
 app = Flask(__name__)
+app.config['WTF_CSRF_ENABLED'] = False
+
+class UserForm(FlaskForm):
+    name = StringField('name')
+    email = StringField('email')
+    phone = StringField('phone')
+    net_worth = StringField('net_worth')
+    submit = SubmitField('submit')
 
 #landing page
-@app.route("/")
+@app.route("/", methods=['GET','POST'])
 @app.route("/start")
 def start():
-    return render_template("landingpage.html")
-#form submission
-@app.route("/submit", methods = ["POST"])
-def submit():
-    if request.method == "POST":
-        if request.form.get("nm"):
+    form = UserForm()
+
+    if form.validate_on_submit():
+        name = form.name.data
+        email = form.email.data
+        phone = form.phone.data
+        net_worth = form.phone.data
+        user_data = {
+            'name': name,
+            'email': email,
+            'phone': phone,
+            'net_worth': net_worth
+        }
+        with open('data.json', 'w') as f:
+            json.dump(user_data, f)
+        return 'Data saved successfully!'
+    return render_template('landingpage.html',form=form)
 
 
 
