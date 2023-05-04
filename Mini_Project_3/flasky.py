@@ -20,12 +20,13 @@ class UserForm(FlaskForm):
     submit = SubmitField('submit')
 
 #landing page
-@app.route("/", methods=['GET','POST'])
+@app.route("/", methods=['POST'])
 @app.route("/start")
 def start():
     form = UserForm()
 
-    if form.validate_on_submit():
+    if request.method == 'POST':
+        print('submit called get')
         name = form.name.data
         email = form.email.data
         phone = form.phone.data
@@ -38,7 +39,7 @@ def start():
         }
         with open('data.json', 'w') as f:
             json.dump(user_data, f)
-        return 'Data saved successfully!'
+
     return render_template('landingpage.html',form=form)
 
 
