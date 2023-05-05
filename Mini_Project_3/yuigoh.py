@@ -1,6 +1,7 @@
 import pprint
 import requests
 from flask import Flask,redirect,url_for,request,render_template
+import pandas as pd
 import json
 
 url = 'https://db.ygoprodeck.com/api/v7/cardinfo.php'
@@ -39,12 +40,17 @@ def get_all_byType(searchtype):
         return False
 
 def get_card_byPrice(searchPrice):
-    cardByPrice = {}
+    cardByPrice = {'name':[],
+                   'price':[]}
     for card in jsoncards['data']:
         if float(searchPrice) >= float(card['card_prices'][0]['amazon_price']):
-            cardByPrice[f'{card["name"]}'] = card['card_prices'][0]['amazon_price']
+            cardByPrice['name'].append(card["name"])
+            cardByPrice['price'].append(float(card['card_prices'][0]['amazon_price']))
+    dataframe = pd.DataFrame.from_dict(cardByPrice)
     if cardByPrice:
-        return dict(sorted(cardByPrice.items(), key=lambda item: float(item[1])))
+        dataframe = dataframe.sort_values(by='price',ascending=False)
+        return json.loads(dataframe.to_json(orient='split'))
+
     else:
         return False
 
