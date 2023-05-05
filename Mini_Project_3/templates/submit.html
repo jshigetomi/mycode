@@ -1,0 +1,14 @@
+<!doctype html>
+<html>
+    <body>
+        {% if net_worth > 50000 %}
+        <h1> Thank you for submitting your info! </h1>
+        {% endif %}
+        {% if net_worth < 50000 %}
+        <h1> You should save more money </h1>
+        {% endif %}
+        {% if name == 'justin' %}
+        <h1> Hey we have the same name! </h1>
+        {% endif %}
+    </body>
+</html>

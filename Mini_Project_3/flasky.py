@@ -12,38 +12,34 @@ import json
 app = Flask(__name__)
 app.config['WTF_CSRF_ENABLED'] = False
 
-class UserForm(FlaskForm):
-    name = StringField('name')
-    email = StringField('email')
-    phone = StringField('phone')
-    net_worth = StringField('net_worth')
-    submit = SubmitField('submit')
-
 #landing page
-@app.route("/", methods=['POST'])
-@app.route("/start")
+@app.route('/')
+@app.route('/start')
 def start():
-    form = UserForm()
+    return render_template('landingpage.html')
 
+#search
+@app.route("/search", methods=['POST','GET'])
+def search():
     if request.method == 'POST':
-        print('submit called get')
-        name = form.name.data
-        email = form.email.data
-        phone = form.phone.data
-        net_worth = form.phone.data
+        print('submit called post')
+        default = '0'
+        name = request.form.get('name',default)
+        email = request.form.get('email',default)
+        phone = request.form.get('phone',default)
+        net_worth = request.form.get('net_worth',default)
         user_data = {
             'name': name,
             'email': email,
             'phone': phone,
             'net_worth': net_worth
         }
-        with open('data.json', 'w') as f:
+        print(name,email,phone,net_worth)
+        with open('data.json', 'a') as f:
             json.dump(user_data, f)
-
-    return render_template('landingpage.html',form=form)
-
+        return render_template("submit.html",name = name, net_worth = int(net_worth))
 
 
 #runs the server on aux1
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=2224)
+    app.run(host="0.0.0.0", port=2224,debug=True)
