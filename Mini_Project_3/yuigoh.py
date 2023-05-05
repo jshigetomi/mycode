@@ -3,6 +3,7 @@ import requests
 from flask import Flask,redirect,url_for,request,render_template
 import pandas as pd
 import json
+import html
 
 url = 'https://db.ygoprodeck.com/api/v7/cardinfo.php'
 cards = requests.get(url)
@@ -59,50 +60,54 @@ def get_card_byPrice(searchPrice):
 def start():
     return render_template('yugiohlandingpage.html')
 
-@app.route('/search',methods=['POST'])
+@app.route('/search',methods=['POST','GET'])
 def search():
+    if request.method == 'GET':
+        name = request.args.get('name')
     if request.method == 'POST':
         name = request.form.get('name')
         print(name)
-        card = get_card(name)
-        if card:
-            return card
-        else:
-            return json.loads('{}')
+    card = get_card(name)
+    if card:
+        return card
+    else:
+        return json.loads('{}')
 
-@app.route('/imgSearch',methods=['POST'])
+@app.route('/imgSearch',methods=['POST','GET'])
 def imgSearch():
+    if request.method == 'GET':
+        name = request.args.get('name')
     if request.method == 'POST':
         name = request.form.get('name')
-        cardImg = get_img(name)
-        if cardImg:    
-            return render_template("yugiohimage.html" ,imageURL = cardImg)
-        else:
-            return json.loads('{}')
+    cardImg = get_img(name)
+    if cardImg:    
+        return render_template("yugiohimage.html" ,imageURL = cardImg)
+    else:
+        return json.loads('{}')
 
-@app.route('/typeSearch',methods=['POST'])
+@app.route('/typeSearch',methods=['POST','GET'])
 def typeSearch():
+    if request.method == 'GET':
+        Type = request.args.get('type')
     if request.method == 'POST':
         Type = request.form.get('type')
-        cardType = get_all_byType(Type)
-        if cardType:
-            return cardType
-        else: 
-            return json.loads('{}')
+    cardType = get_all_byType(Type)
+    if cardType:
+        return cardType
+    else: 
+        return json.loads('{}')
 
-@app.route('/priceSearch',methods=['POST'])
+@app.route('/priceSearch',methods=['POST','GET'])
 def priceSearch():
+    if request.method == 'GET':
+        price = request.args.get('price')
     if request.method == 'POST':
         price = request.form.get('price')
-        cardsByPrice = get_card_byPrice(price)
-        if cardsByPrice:
-            return cardsByPrice
-        else:
-            return json.loads('{}')
-
-def main():
-    get_cards()
-    
+    cardsByPrice = get_card_byPrice(price)
+    if cardsByPrice:
+        return cardsByPrice
+    else:
+        return json.loads('{}')    
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=2224,debug=True)
